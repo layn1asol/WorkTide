@@ -15,13 +15,25 @@ datasource db {
 
 // Basic models for a freelance platform
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  // Add more fields as needed
+  id           String   @id @default(uuid())
+  email        String   @unique
+  password     String
+  fullName     String
+  userType     String   // 'freelancer' or 'client'
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  // Profile fields
+  title        String?
+  bio          String?
+  skills       String[] @default([])
+  hourlyRate   Float?
+  rating       Float?
+  completedJobs Int?
+  location     String?
+  imageUrl     String?
+  languages    String[] @default([])
+  education    Json[]   @default([])  // Array of education objects
+  experience   Json[]   @default([])  // Array of experience objects
 }
 
 model Project {

@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
+/* Custom styles that don't conflict with Tailwind's dark mode */
+
 #root {
-  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 

@@ -19,8 +19,6 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-
-
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
@@ -46,10 +44,6 @@ pids
 
 # TypeScript
 *.tsbuildinfo
-
-# Prisma
-/prisma/*.db
-/prisma/migrations/
 
 # Cache
 .cache
