@@ -9,6 +9,7 @@ import SignUp from './components/auth/SignUp'
 import Profile from './pages/Profile'
 import Settings from './pages/Settings'
 import FreelancerProfile from './pages/FreelancerProfile'
+import TaskManagement from './pages/TaskManagement'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
@@ -24,7 +25,10 @@ function AppContent() {
     <Router>
       <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 pt-16 flex flex-col">
         <Navbar />
-        <div className={`flex-grow ${isDropdownOpen ? 'filter blur-sm transition-all ease-in-out duration-300' : ''}`}>
+        <div 
+          className={`flex-grow ${isDropdownOpen ? 'filter blur-sm transition-all ease-in-out duration-300' : ''}`}
+          onClick={() => isDropdownOpen && document.dispatchEvent(new MouseEvent('mousedown'))}
+        >
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/find-work" element={<FindWork />} />
@@ -45,6 +49,14 @@ function AppContent() {
               element={
                 <ProtectedRoute>
                   <Settings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-tasks"
+              element={
+                <ProtectedRoute>
+                  <TaskManagement />
                 </ProtectedRoute>
               }
             />

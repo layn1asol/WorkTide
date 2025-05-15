@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
-import { UserCircleIcon, Cog6ToothIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useDropdown } from '../../contexts/DropdownContext';
 
@@ -10,7 +10,7 @@ const Navbar: React.FC = () => {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const { theme } = useTheme();
-  const { isDropdownOpen, setDropdownOpen } = useDropdown();
+  const { isDropdownOpen, setDropdownOpen, toggleDropdown } = useDropdown();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -79,22 +79,41 @@ const Navbar: React.FC = () => {
             </div>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button with smooth animation */}
           <div className="flex items-center sm:hidden relative">
             <button
-              onClick={() => {
-                setIsMobileMenuOpen(!isMobileMenuOpen);
-                setDropdownOpen(!isMobileMenuOpen);
+              onClick={(e) => {
+                e.stopPropagation();
+                // Always close if open, only open if closed
+                if (isMobileMenuOpen) {
+                  setIsMobileMenuOpen(false);
+                  setDropdownOpen(false);
+                } else {
+                  setIsMobileMenuOpen(true);
+                  setDropdownOpen(true);
+                }
               }}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white focus:outline-none"
               aria-expanded="false"
             >
               <span className="sr-only">Open main menu</span>
-              {isMobileMenuOpen ? (
-                <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
-              )}
+              <div className="w-6 h-6 relative flex justify-center items-center">
+                <span 
+                  className={`absolute block h-0.5 w-5 bg-current transform transition duration-300 ease-in-out ${
+                    isMobileMenuOpen ? 'rotate-45' : '-translate-y-1.5'
+                  }`}
+                />
+                <span 
+                  className={`absolute block h-0.5 w-5 bg-current transform transition duration-300 ease-in-out ${
+                    isMobileMenuOpen ? 'opacity-0' : 'opacity-100'
+                  }`}
+                />
+                <span 
+                  className={`absolute block h-0.5 w-5 bg-current transform transition duration-300 ease-in-out ${
+                    isMobileMenuOpen ? '-rotate-45' : 'translate-y-1.5'
+                  }`}
+                />
+              </div>
             </button>
             
             {/* Mobile menu */}
@@ -102,6 +121,7 @@ const Navbar: React.FC = () => {
               className={`${isMobileMenuOpen ? 'block' : 'hidden'} absolute right-0 mt-8 w-60 top-10 origin-top-right rounded-md shadow-xl bg-white dark:bg-gray-800 z-50`}
               ref={mobileMenuRef}
               style={theme === 'light' ? { backgroundColor: 'white' } : {}}
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="pt-2 pb-3 space-y-1">
                 <Link
@@ -151,6 +171,18 @@ const Navbar: React.FC = () => {
                       >
                         {t('yourProfile')}
                       </Link>
+                      {user.userType === 'client' && (
+                        <Link
+                          to="/my-tasks"
+                          className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-black dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 hover:text-gray-800 dark:hover:text-white"
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            setDropdownOpen(false);
+                          }}
+                        >
+                          Manage Tasks
+                        </Link>
+                      )}
                       <Link
                         to="/settings"
                         className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-black dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 hover:text-gray-800 dark:hover:text-white"
@@ -203,7 +235,10 @@ const Navbar: React.FC = () => {
             {user ? (
               <div className="relative" ref={menuRef}>
                 <button
-                  onClick={() => setDropdownOpen(!isDropdownOpen)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleDropdown();
+                  }}
                   className="flex items-center space-x-2 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white focus:outline-none"
                 >
                   <UserCircleIcon className="h-8 w-8" />
@@ -213,6 +248,7 @@ const Navbar: React.FC = () => {
                   <div 
                     className="origin-top-right absolute right-0 mt-8 w-60 rounded-md shadow-xl py-1 bg-white dark:bg-gray-800 z-50" 
                     style={dropdownStyle}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <Link
                       to="/profile"
@@ -221,6 +257,17 @@ const Navbar: React.FC = () => {
                     >
                       {t('yourProfile')}
                     </Link>
+                    {user.userType === 'client' && (
+                      <Link
+                        to="/my-tasks"
+                        className="block px-4 py-2 text-sm text-black dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <span>Manage Tasks</span>
+                        </div>
+                      </Link>
+                    )}
                     <Link
                       to="/settings"
                       className="block px-4 py-2 text-sm text-black dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"

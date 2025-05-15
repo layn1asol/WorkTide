@@ -120,14 +120,14 @@ const HomePage: React.FC = () => {
       </div>
       
       {/* How it works section */}
-      <div className={`py-16 w-full ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-50 text-gray-900'}`}>
+      <div className={`py-16 w-full bg-indigo-700`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
-            <h2 className={`text-base font-semibold tracking-wide uppercase ${theme === 'dark' ? 'text-indigo-200' : 'text-indigo-600'}`}>Getting Started</h2>
-            <p className={`mt-2 text-3xl leading-8 font-extrabold tracking-tight sm:text-4xl ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className="text-base font-semibold tracking-wide uppercase text-indigo-200">Getting Started</h2>
+            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight sm:text-4xl text-white">
               How WorkTide Works
             </p>
-            <p className={`mt-4 max-w-2xl text-xl lg:mx-auto ${theme === 'dark' ? 'text-indigo-100' : 'text-gray-500'}`}>
+            <p className="mt-4 max-w-2xl text-xl lg:mx-auto text-indigo-100">
               Follow these simple steps to get started on your freelancing journey.
             </p>
           </div>
@@ -136,56 +136,36 @@ const HomePage: React.FC = () => {
             <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10">
               {/* Step 1 */}
               <div className="text-center">
-                <div className={`flex items-center justify-center h-16 w-16 rounded-full mx-auto ${theme === 'dark' ? 'bg-indigo-200 text-indigo-800' : 'bg-indigo-100 text-indigo-600'}`}>
+                <div className="flex items-center justify-center h-16 w-16 rounded-full mx-auto bg-indigo-200 text-indigo-800">
                   <span className="text-xl font-bold">1</span>
                 </div>
-                <h3 className={`mt-4 text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Create Your Profile</h3>
-                <p className={`mt-2 text-base ${theme === 'dark' ? 'text-indigo-100' : 'text-gray-500'}`}>
+                <h3 className="mt-4 text-lg font-medium text-white">Create Your Profile</h3>
+                <p className="mt-2 text-base text-indigo-100">
                   Sign up and build your professional profile highlighting your skills and experience.
                 </p>
               </div>
               
               {/* Step 2 */}
               <div className="text-center">
-                <div className={`flex items-center justify-center h-16 w-16 rounded-full mx-auto ${theme === 'dark' ? 'bg-indigo-200 text-indigo-800' : 'bg-indigo-100 text-indigo-600'}`}>
+                <div className="flex items-center justify-center h-16 w-16 rounded-full mx-auto bg-indigo-200 text-indigo-800">
                   <span className="text-xl font-bold">2</span>
                 </div>
-                <h3 className={`mt-4 text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Find Opportunities</h3>
-                <p className={`mt-2 text-base ${theme === 'dark' ? 'text-indigo-100' : 'text-gray-500'}`}>
+                <h3 className="mt-4 text-lg font-medium text-white">Find Opportunities</h3>
+                <p className="mt-2 text-base text-indigo-100">
                   Browse available projects or submit proposals for jobs that match your expertise.
                 </p>
               </div>
               
               {/* Step 3 */}
               <div className="text-center">
-                <div className={`flex items-center justify-center h-16 w-16 rounded-full mx-auto ${theme === 'dark' ? 'bg-indigo-200 text-indigo-800' : 'bg-indigo-100 text-indigo-600'}`}>
+                <div className="flex items-center justify-center h-16 w-16 rounded-full mx-auto bg-indigo-200 text-indigo-800">
                   <span className="text-xl font-bold">3</span>
                 </div>
-                <h3 className={`mt-4 text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Get Paid</h3>
-                <p className={`mt-2 text-base ${theme === 'dark' ? 'text-indigo-100' : 'text-gray-500'}`}>
+                <h3 className="mt-4 text-lg font-medium text-white">Get Paid</h3>
+                <p className="mt-2 text-base text-indigo-100">
                   Complete your work and receive payment directly through our secure platform.
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Statistics section */}
-      <div className="bg-indigo-800 py-16 w-full">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="text-center">
-              <h3 className="text-5xl font-extrabold text-white">15K+</h3>
-              <p className="mt-2 text-xl text-indigo-100">Freelancers</p>
-            </div>
-            <div className="text-center">
-              <h3 className="text-5xl font-extrabold text-white">8K+</h3>
-              <p className="mt-2 text-xl text-indigo-100">Clients</p>
-            </div>
-            <div className="text-center">
-              <h3 className="text-5xl font-extrabold text-white">25K+</h3>
-              <p className="mt-2 text-xl text-indigo-100">Completed Projects</p>
             </div>
           </div>
         </div>

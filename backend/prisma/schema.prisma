@@ -34,6 +34,9 @@ model User {
   languages    String[] @default([])
   education    Json[]   @default([])  // Array of education objects
   experience   Json[]   @default([])  // Array of experience objects
+  
+  // Relations
+  tasks        Task[]   // Tasks created by clients
 }
 
 model Project {
@@ -44,4 +47,19 @@ model Project {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   // Add more fields as needed
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  budget      Float
+  skills      String[] @default([])
+  status      String   @default("open") // 'open', 'in_progress', 'completed'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  clientId    String
+  client      User     @relation(fields: [clientId], references: [id])
 }
