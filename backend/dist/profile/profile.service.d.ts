@@ -19,6 +19,7 @@ export declare class ProfileService {
         languages: string[];
         education: import("@prisma/client/runtime/library").JsonValue[];
         experience: import("@prisma/client/runtime/library").JsonValue[];
+        isHidden: boolean;
     }>;
     getPublicProfile(userId: string): Promise<{
         id: string;
@@ -36,6 +37,7 @@ export declare class ProfileService {
         languages: string[];
         education: import("@prisma/client/runtime/library").JsonValue[];
         experience: import("@prisma/client/runtime/library").JsonValue[];
+        isHidden: boolean;
     }>;
     getAllFreelancers(search?: string, skills?: string[]): Promise<{
         id: string;
@@ -67,5 +69,6 @@ export declare class ProfileService {
         languages: string[];
         education: import("@prisma/client/runtime/library").JsonValue[];
         experience: import("@prisma/client/runtime/library").JsonValue[];
+        isHidden: boolean;
     }>;
 }

@@ -4,58 +4,32 @@ export declare class AuthService {
     private prisma;
     private jwtService;
     constructor(prisma: PrismaService, jwtService: JwtService);
-    signup(data: {
-        email: string;
-        password: string;
-        fullName: string;
-        userType: 'freelancer' | 'client';
-    }): Promise<{
-        token: string;
+    validateUser(email: string, password: string): Promise<any>;
+    register(userData: any): Promise<{
         user: {
+            rating: number | null;
             id: string;
             email: string;
             fullName: string;
             userType: string;
             createdAt: Date;
-        };
-    }>;
-    login(email: string, password: string): Promise<{
-        token: string;
-        user: {
-            id: string;
-            email: string;
-            fullName: string;
-            userType: string;
-            createdAt: Date;
+            updatedAt: Date;
             title: string | null;
             bio: string | null;
             skills: string[];
             hourlyRate: number | null;
-            rating: number | null;
             completedJobs: number | null;
             location: string | null;
             imageUrl: string | null;
             languages: string[];
             education: import("@prisma/client/runtime/library").JsonValue[];
             experience: import("@prisma/client/runtime/library").JsonValue[];
+            isHidden: boolean;
         };
+        token: string;
     }>;
-    validateUser(id: string): Promise<{
-        id: string;
-        email: string;
-        fullName: string;
-        userType: string;
-        createdAt: Date;
-        title: string | null;
-        bio: string | null;
-        skills: string[];
-        hourlyRate: number | null;
-        rating: number | null;
-        completedJobs: number | null;
-        location: string | null;
-        imageUrl: string | null;
-        languages: string[];
-        education: import("@prisma/client/runtime/library").JsonValue[];
-        experience: import("@prisma/client/runtime/library").JsonValue[];
+    login(user: any): Promise<{
+        token: string;
+        user: any;
     }>;
 }

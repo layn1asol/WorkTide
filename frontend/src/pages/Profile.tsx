@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
-import { UserCircleIcon, PencilIcon, EnvelopeIcon, PhoneIcon, GlobeAltIcon, StarIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon, PencilIcon, EnvelopeIcon, PhoneIcon, GlobeAltIcon, StarIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import Avatar from '../components/Avatar';
+import RatingComponent from '../components/RatingComponent';
 
 const Profile: React.FC = () => {
   const { t } = useTranslation();
@@ -43,9 +45,6 @@ const Profile: React.FC = () => {
     );
   }
 
-  // Default image if user doesn't have one
-  const userImage = user.imageUrl || "https://randomuser.me/api/portraits/lego/1.jpg";
-
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,15 +52,10 @@ const Profile: React.FC = () => {
         <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
           <div className="p-6 sm:p-8">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-              {user.imageUrl ? (
-                <img
-                  src={userImage}
-                  alt={user.fullName}
-                  className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-white shadow"
-                />
-              ) : (
-                <UserCircleIcon className="w-24 h-24 sm:w-32 sm:h-32 text-gray-400" />
-              )}
+              <Avatar 
+                fullName={user.fullName}
+                className="w-24 h-24 sm:w-32 sm:h-32 text-xl"
+              />
               <div className="flex-1 text-center sm:text-left">
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{user.fullName}</h1>
                 <p className="text-xl text-gray-600 mt-1">{user.title || t('noTitle')}</p>
@@ -71,7 +65,18 @@ const Profile: React.FC = () => {
                     <>
                       <div className="flex items-center">
                         <StarIcon className="h-5 w-5 text-yellow-400" />
-                        <span className="ml-1 text-gray-700">{user.rating} ({user.completedJobs || 0} {t('jobs')})</span>
+                        <span className="ml-1 text-gray-700">{user.rating}</span>
+                        {user.userType === 'freelancer' && (
+                          <Link 
+                            to={`/freelancer-reviews/${user.id}`}
+                            className="ml-1 text-blue-600 hover:text-blue-800 hover:underline"
+                          >
+                            ({user.completedJobs || 0} {t('reviews')})
+                          </Link>
+                        )}
+                        {user.userType !== 'freelancer' && (
+                          <span className="ml-1">({user.completedJobs || 0} {t('jobs')})</span>
+                        )}
                       </div>
                       <span className="text-gray-300">•</span>
                     </>
@@ -149,6 +154,31 @@ const Profile: React.FC = () => {
                 )}
               </div>
             </div>
+
+            {/* Reviews section for freelancers */}
+            {user.userType === 'freelancer' && (
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div className="p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-semibold text-gray-900">{t('ratingsReviews')}</h2>
+                    <Link 
+                      to={`/freelancer-reviews/${user.id}`}
+                      className="flex items-center text-blue-600 hover:text-blue-700"
+                    >
+                      {t('viewAllReviews')}
+                      <ArrowRightIcon className="h-4 w-4 ml-1" />
+                    </Link>
+                  </div>
+                  
+                  {/* Show a preview of reviews */}
+                  <RatingComponent 
+                    freelancerId={user.id}
+                    previewMode={true}
+                    maxReviews={3}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column */}

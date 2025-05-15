@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_ENDPOINTS } from '../config/api';
 import CreateTaskForm from '../components/CreateTaskForm';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface Task {
   id: string;
@@ -18,14 +20,27 @@ interface Task {
   };
 }
 
+interface TaskApplication {
+  id: string;
+  taskId: string;
+  status: string;
+  createdAt: string;
+}
+
 const FindWork: React.FC = () => {
-  const { user } = useAuth();
+  const { t } = useTranslation();
+  const { user, token } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
+  const [myApplications, setMyApplications] = useState<TaskApplication[]>([]);
+  const [isApplying, setIsApplying] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [coverLetter, setCoverLetter] = useState('');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const fetchTasks = async () => {
     setIsLoading(true);
@@ -35,7 +50,8 @@ const FindWork: React.FC = () => {
       const response = await fetch(
         API_ENDPOINTS.tasks.getAll(
           searchQuery || undefined,
-          selectedSkills.length > 0 ? selectedSkills : undefined
+          selectedSkills.length > 0 ? selectedSkills : undefined,
+          'open'
         )
       );
 
@@ -60,9 +76,31 @@ const FindWork: React.FC = () => {
     }
   };
 
+  const fetchMyApplications = async () => {
+    if (!user || user.userType !== 'freelancer') return;
+
+    try {
+      const response = await fetch(API_ENDPOINTS.taskApplications.getByFreelancer, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMyApplications(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch applications:', err);
+    }
+  };
+
   useEffect(() => {
     fetchTasks();
-  }, [searchQuery, selectedSkills]);
+    if (user && user.userType === 'freelancer') {
+      fetchMyApplications();
+    }
+  }, [searchQuery, selectedSkills, user?.id]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,21 +115,101 @@ const FindWork: React.FC = () => {
     );
   };
 
+  const handleApply = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setIsApplying(true);
+    setCoverLetter('');
+  };
+
+  const closeApplyModal = () => {
+    setIsApplying(false);
+    setSelectedTaskId(null);
+    setCoverLetter('');
+  };
+
+  const submitApplication = async () => {
+    if (!selectedTaskId) return;
+
+    try {
+      const response = await fetch(API_ENDPOINTS.taskApplications.apply(selectedTaskId), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          coverLetter: coverLetter.trim() || undefined,
+        }),
+      });
+
+      if (response.ok) {
+        setSuccessMessage(t('applicationSubmittedSuccess'));
+        closeApplyModal();
+        fetchMyApplications();
+        
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || 'Failed to submit application. Please try again.');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+      console.error(err);
+    }
+  };
+
+  const hasApplied = (taskId: string) => {
+    return myApplications.some(app => app.taskId === taskId);
+  };
+
+  // Ensure modals are properly cleaned up when unmounted
+  useEffect(() => {
+    return () => {
+      // Cleanup function that runs when component unmounts
+      const modalOverlays = document.querySelectorAll('.fixed.inset-0[role="dialog"]');
+      modalOverlays.forEach(overlay => overlay.remove());
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-            Find Your Next Project
+            {t('findYourNextProject')}
           </h2>
           <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
-            Browse through available projects and find the perfect match for your skills.
+            {t('browseAvailableProjects')}
           </p>
+          
+          {/* Link to My Applications for freelancer users */}
+          {user?.userType === 'freelancer' && (
+            <div className="mt-4">
+              <Link
+                to="/my-applications"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+              >
+                {t('viewMyApplications')}
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Task creation form for clients only */}
         {user?.userType === 'client' && (
           <CreateTaskForm onTaskCreated={fetchTasks} />
+        )}
+
+        {/* Success message */}
+        {successMessage && (
+          <div className="text-center py-4">
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+              <p>{successMessage}</p>
+            </div>
+          </div>
         )}
 
         {/* Search and filter */}
@@ -136,75 +254,131 @@ const FindWork: React.FC = () => {
           )}
         </div>
 
-        {/* Display tasks */}
-        {isLoading ? (
+        {/* Show loading state */}
+        {isLoading && (
           <div className="text-center py-12">
-            <p className="text-gray-500">Loading tasks...</p>
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+            <p className="mt-4 text-gray-600">{t('loadingTasks')}</p>
           </div>
-        ) : error ? (
+        )}
+
+        {/* Show error message if any */}
+        {error && !isLoading && (
+          <div className="text-center py-8">
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              <p>{error}</p>
+            </div>
+          </div>
+        )}
+
+        {/* No tasks state */}
+        {!isLoading && !error && tasks.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-red-500">{error}</p>
+            <p className="text-gray-600">{t('noTasksFound')}</p>
           </div>
-        ) : tasks.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No tasks found. Please try a different search.</p>
-          </div>
-        ) : (
-          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        )}
+
+        {/* Task list */}
+        {!isLoading && !error && tasks.length > 0 && (
+          <div className="mt-8 grid gap-8">
             {tasks.map((task) => (
               <div
                 key={task.id}
-                className="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow duration-300"
+                className="bg-white shadow overflow-hidden rounded-md"
               >
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg font-medium text-gray-900">{task.title}</h3>
-                  <p className="mt-2 text-sm text-gray-500">{task.description}</p>
-                  <div className="mt-4">
-                    <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
-                      Budget: ${task.budget}
-                    </span>
+                <div className="px-6 py-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{task.title}</h3>
+                      <p className="mt-1 text-sm text-gray-600">{t('jobPosted')} {new Date(task.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                      ${task.budget}
+                    </div>
                   </div>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {task.skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                      >
-                        {skill}
-                      </span>
-                    ))}
+                  <div className="mt-3">
+                    <p className="text-gray-700">{task.description}</p>
                   </div>
-                  <div className="mt-4">
-                    <button
-                      className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                      Apply Now
-                    </button>
-                  </div>
-                </div>
-                <div className="bg-gray-50 px-4 py-4 sm:px-6 flex items-center justify-between">
-                  <div className="text-sm text-gray-500">
-                    Posted {new Date(task.createdAt).toLocaleDateString()}
-                  </div>
-                  <div className="flex items-center">
-                    {task.client.imageUrl ? (
-                      <img
-                        src={task.client.imageUrl}
-                        alt={task.client.fullName}
-                        className="h-6 w-6 rounded-full mr-2"
-                      />
-                    ) : (
-                      <div className="h-6 w-6 rounded-full bg-gray-300 mr-2 flex items-center justify-center">
-                        <span className="text-xs font-medium text-gray-600">
-                          {task.client.fullName.charAt(0)}
+                  <div className="mt-3">
+                    <div className="flex flex-wrap gap-2">
+                      {task.skills.map((skill) => (
+                        <span key={skill} className="bg-gray-100 px-2 py-1 rounded-full text-xs text-gray-800">
+                          {skill}
                         </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="mt-4 flex justify-between items-center">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <div className="h-8 w-8 rounded-full bg-gradient-to-r from-purple-400 to-indigo-500 flex items-center justify-center text-white font-medium">
+                          {task.client.fullName.charAt(0)}
+                        </div>
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-gray-900">{task.client.fullName}</p>
+                      </div>
+                    </div>
+                    {user?.userType === 'freelancer' && (
+                      <div>
+                        {hasApplied(task.id) ? (
+                          <span className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md bg-green-100 text-green-800">
+                            {t('applied')}
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => handleApply(task.id)}
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+                          >
+                            {t('applyNow')}
+                          </button>
+                        )}
                       </div>
                     )}
-                    <span className="text-sm text-gray-600">{task.client.fullName}</span>
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        
+        {/* Application Modal */}
+        {isApplying && selectedTaskId && (
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50" role="dialog">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+              <div className="px-6 py-4 border-b">
+                <h3 className="text-lg font-medium">{t('applyForThisTask')}</h3>
+              </div>
+              <div className="p-6">
+                <div className="mb-4">
+                  <label htmlFor="coverLetter" className="block text-sm font-medium text-gray-700 mb-1">{t('coverLetter')}</label>
+                  <textarea
+                    id="coverLetter"
+                    rows={4}
+                    className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder={t('tellClientWhyYoureGoodFit')}
+                    value={coverLetter}
+                    onChange={(e) => setCoverLetter(e.target.value)}
+                  ></textarea>
+                </div>
+              </div>
+              <div className="px-6 py-4 border-t bg-gray-50 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={closeApplyModal}
+                  className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                >
+                  {t('cancel')}
+                </button>
+                <button
+                  type="button"
+                  onClick={submitApplication}
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                >
+                  {t('submit')}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

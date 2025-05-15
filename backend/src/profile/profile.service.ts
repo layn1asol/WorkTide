@@ -25,6 +25,7 @@ export class ProfileService {
         languages: true,
         education: true,
         experience: true,
+        isHidden: true,
       },
     });
 
@@ -55,6 +56,7 @@ export class ProfileService {
         languages: true,
         education: true,
         experience: true,
+        isHidden: true,
       },
     });
 
@@ -69,6 +71,7 @@ export class ProfileService {
     const freelancers = await this.prisma.user.findMany({
       where: {
         userType: 'freelancer',
+        isHidden: false,
         AND: [
           search ? {
             OR: [
@@ -114,6 +117,11 @@ export class ProfileService {
       throw new NotFoundException('User not found');
     }
 
+    // Determine if isHidden should be updated
+    const isHiddenUpdate = user.userType === 'freelancer' && profileData.isHidden !== undefined
+      ? { isHidden: profileData.isHidden }
+      : {};
+
     // Update the user profile fields
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
@@ -123,10 +131,10 @@ export class ProfileService {
         skills: profileData.skills || [],
         hourlyRate: profileData.hourlyRate,
         location: profileData.location,
-        imageUrl: profileData.imageUrl,
         languages: profileData.languages || [],
         education: profileData.education || [],
         experience: profileData.experience || [],
+        ...isHiddenUpdate,
       },
       select: {
         id: true,
@@ -145,7 +153,15 @@ export class ProfileService {
         languages: true,
         education: true,
         experience: true,
+        isHidden: true,
       },
+    });
+
+    // Log the updated user data for debugging
+    console.log('Profile updated:', { 
+      userId, 
+      isHidden: updatedUser.isHidden,
+      userType: updatedUser.userType
     });
 
     return updatedUser;

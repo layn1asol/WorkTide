@@ -37,6 +37,7 @@ let ProfileService = class ProfileService {
                 languages: true,
                 education: true,
                 experience: true,
+                isHidden: true,
             },
         });
         if (!user) {
@@ -63,6 +64,7 @@ let ProfileService = class ProfileService {
                 languages: true,
                 education: true,
                 experience: true,
+                isHidden: true,
             },
         });
         if (!user) {
@@ -74,6 +76,7 @@ let ProfileService = class ProfileService {
         const freelancers = await this.prisma.user.findMany({
             where: {
                 userType: 'freelancer',
+                isHidden: false,
                 AND: [
                     search ? {
                         OR: [
@@ -114,6 +117,9 @@ let ProfileService = class ProfileService {
         if (!user) {
             throw new common_1.NotFoundException('User not found');
         }
+        const isHiddenUpdate = user.userType === 'freelancer' && profileData.isHidden !== undefined
+            ? { isHidden: profileData.isHidden }
+            : {};
         const updatedUser = await this.prisma.user.update({
             where: { id: userId },
             data: {
@@ -122,10 +128,10 @@ let ProfileService = class ProfileService {
                 skills: profileData.skills || [],
                 hourlyRate: profileData.hourlyRate,
                 location: profileData.location,
-                imageUrl: profileData.imageUrl,
                 languages: profileData.languages || [],
                 education: profileData.education || [],
                 experience: profileData.experience || [],
+                ...isHiddenUpdate,
             },
             select: {
                 id: true,
@@ -144,7 +150,13 @@ let ProfileService = class ProfileService {
                 languages: true,
                 education: true,
                 experience: true,
+                isHidden: true,
             },
+        });
+        console.log('Profile updated:', {
+            userId,
+            isHidden: updatedUser.isHidden,
+            userType: updatedUser.userType
         });
         return updatedUser;
     }

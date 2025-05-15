@@ -16,19 +16,43 @@ exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const jwt_auth_guard_1 = require("./guards/jwt-auth.guard");
+const prisma_service_1 = require("../prisma/prisma.service");
 let AuthController = class AuthController {
     authService;
-    constructor(authService) {
+    prisma;
+    constructor(authService, prisma) {
         this.authService = authService;
+        this.prisma = prisma;
     }
     async signup(data) {
-        return this.authService.signup(data);
+        return this.authService.register(data);
     }
     async login(data) {
-        return this.authService.login(data.email, data.password);
+        const user = await this.authService.validateUser(data.email, data.password);
+        return this.authService.login(user);
     }
     async getProfile(req) {
-        return this.authService.validateUser(req.user.sub);
+        const user = await this.prisma.user.findUnique({
+            where: { id: req.user.sub },
+            select: {
+                id: true,
+                email: true,
+                fullName: true,
+                userType: true,
+                createdAt: true,
+                title: true,
+                bio: true,
+                skills: true,
+                hourlyRate: true,
+                rating: true,
+                completedJobs: true,
+                location: true,
+                languages: true,
+                education: true,
+                experience: true,
+            },
+        });
+        return user;
     }
 };
 exports.AuthController = AuthController;
@@ -56,6 +80,7 @@ __decorate([
 ], AuthController.prototype, "getProfile", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
-    __metadata("design:paramtypes", [auth_service_1.AuthService])
+    __metadata("design:paramtypes", [auth_service_1.AuthService,
+        prisma_service_1.PrismaService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

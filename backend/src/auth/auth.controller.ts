@@ -1,10 +1,14 @@
 import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly prisma: PrismaService
+  ) {}
 
   @Post('signup')
   async signup(
@@ -16,19 +20,42 @@ export class AuthController {
       userType: 'freelancer' | 'client';
     },
   ) {
-    return this.authService.signup(data);
+    return this.authService.register(data);
   }
 
   @Post('login')
   async login(
     @Body() data: { email: string; password: string },
   ) {
-    return this.authService.login(data.email, data.password);
+    const user = await this.authService.validateUser(data.email, data.password);
+    return this.authService.login(user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getProfile(@Request() req) {
-    return this.authService.validateUser(req.user.sub);
+    // Get user details from database using the user ID
+    const user = await this.prisma.user.findUnique({
+      where: { id: req.user.sub },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        userType: true,
+        createdAt: true,
+        title: true,
+        bio: true,
+        skills: true,
+        hourlyRate: true,
+        rating: true,
+        completedJobs: true,
+        location: true,
+        languages: true,
+        education: true,
+        experience: true,
+      },
+    });
+    
+    return user;
   }
 } 

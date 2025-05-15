@@ -40,7 +40,7 @@ const Settings: React.FC = () => {
   const [newLanguage, setNewLanguage] = useState<string>('');
   const [education, setEducation] = useState<Education[]>([]);
   const [experience, setExperience] = useState<Experience[]>([]);
-  const [imageUrl, setImageUrl] = useState<string>('');
+  const [isHidden, setIsHidden] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
   const [saveError, setSaveError] = useState<string>('');
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
@@ -48,6 +48,11 @@ const Settings: React.FC = () => {
   // Initialize form with user data
   useEffect(() => {
     if (user) {
+      console.log("Initializing form with user data:", { 
+        userType: user.userType,
+        isHidden: user.isHidden 
+      });
+      
       setTitle(user.title || '');
       setBio(user.bio || '');
       setLocation(user.location || '');
@@ -56,7 +61,12 @@ const Settings: React.FC = () => {
       setLanguages(user.languages || []);
       setEducation(user.education || []);
       setExperience(user.experience || []);
-      setImageUrl(user.imageUrl || '');
+      
+      // Ensure isHidden is properly initialized as a boolean
+      const hiddenValue = user.isHidden === true;
+      console.log("Setting isHidden value to:", hiddenValue);
+      setIsHidden(hiddenValue);
+      
       setLoading(false);
     } else {
       // If no user data is available after a short timeout, redirect to profile
@@ -130,12 +140,21 @@ const Settings: React.FC = () => {
     setExperience(experience.filter((_, i) => i !== index));
   };
 
+  // Handle toggle for isHidden
+  const handleToggleHidden = () => {
+    const newValue = !isHidden;
+    console.log("Toggling isHidden:", { current: isHidden, new: newValue });
+    setIsHidden(newValue);
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setSaveError('');
     setSaveSuccess(false);
+
+    console.log("Submitting profile with isHidden value:", isHidden);
 
     try {
       const profileData = {
@@ -147,12 +166,14 @@ const Settings: React.FC = () => {
         languages,
         education,
         experience,
-        imageUrl
+        isHidden
       };
 
+      console.log("Profile data being sent:", profileData);
       const success = await updateProfile(profileData);
       
       if (success) {
+        console.log("Profile updated successfully, current isHidden:", isHidden);
         setSaveSuccess(true);
         // Navigate to profile page after 1.5 seconds
         setTimeout(() => {
@@ -252,25 +273,6 @@ const Settings: React.FC = () => {
                           step="0.01"
                         />
                       </div>
-                    </div>
-
-                    <div className="sm:col-span-6">
-                      <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {t('profileImageUrl')}
-                      </label>
-                      <div className="mt-1">
-                        <input
-                          type="text"
-                          id="imageUrl"
-                          value={imageUrl}
-                          onChange={(e) => setImageUrl(e.target.value)}
-                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          placeholder="https://example.com/image.jpg"
-                        />
-                      </div>
-                      <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                        Enter a URL for your profile image
-                      </p>
                     </div>
                   </div>
                 </div>
@@ -524,6 +526,34 @@ const Settings: React.FC = () => {
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
                   <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">{t('appSettings')}</h2>
                   
+                  {/* Freelancer Profile Visibility (only for freelancers) */}
+                  {user?.userType === 'freelancer' && (
+                    <div className="mb-6">
+                      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">{t('profileVisibility') || 'Profile Visibility'}</h3>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <span className="text-gray-700 dark:text-gray-300">{t('makeProfileHidden') || 'Make my account hidden'}</span>
+                          <span className="text-xs text-gray-500">({t('hiddenProfileInfo') || 'Your profile will not appear on the Find Freelancers page'})</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleToggleHidden}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                            isHidden ? 'bg-blue-600' : 'bg-gray-200'
+                          }`}
+                          role="switch"
+                          aria-checked={isHidden}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              isHidden ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Theme Settings */}
                   <div className="mb-6">
                     <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">{t('appearance')}</h3>

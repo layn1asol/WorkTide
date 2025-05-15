@@ -32,6 +32,7 @@ interface User {
   languages?: string[];
   education?: Education[];
   experience?: Experience[];
+  isHidden?: boolean;
 }
 
 interface AuthContextType {
@@ -73,7 +74,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (response.ok) {
         const userData = await response.json();
-        setUser(userData);
+        setUser(prevUser => {
+          // If no previous user, just use the userData
+          if (!prevUser) return userData;
+          
+          // If the isHidden value is missing in the response but we have it in state, preserve it
+          if (userData.isHidden === undefined && prevUser.isHidden !== undefined) {
+            return { ...userData, isHidden: prevUser.isHidden };
+          }
+          
+          return userData;
+        });
       } else {
         // If the token is invalid, clear it
         localStorage.removeItem('token');
@@ -134,7 +145,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (response.ok) {
         const updatedUser = await response.json();
-        setUser(prevUser => prevUser ? { ...prevUser, ...updatedUser } : null);
+        // Make sure we persist isHidden in user state
+        setUser(prevUser => {
+          if (!prevUser) return null;
+          
+          // Explicitly ensure isHidden is included from updatedUser or keep existing value
+          return { 
+            ...prevUser, 
+            ...updatedUser,
+            isHidden: updatedUser.isHidden !== undefined ? updatedUser.isHidden : prevUser.isHidden
+          };
+        });
+        
         // Refetch the user data to ensure we have the most up-to-date information
         setTimeout(() => fetchUser(), 500);
         return true;

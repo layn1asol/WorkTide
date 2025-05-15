@@ -37,9 +37,9 @@ export declare class TasksController {
     })[]>;
     getTaskById(id: string): Promise<{
         client: {
+            rating: number | null;
             id: string;
             fullName: string;
-            rating: number | null;
             location: string | null;
             imageUrl: string | null;
         };

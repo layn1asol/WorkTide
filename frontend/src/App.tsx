@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css'
 import HomePage from './pages/HomePage'
@@ -9,6 +9,8 @@ import SignUp from './components/auth/SignUp'
 import Profile from './pages/Profile'
 import Settings from './pages/Settings'
 import FreelancerProfile from './pages/FreelancerProfile'
+import FreelancerReviewsPage from './pages/FreelancerReviewsPage'
+import FreelancerApplications from './pages/FreelancerApplications'
 import TaskManagement from './pages/TaskManagement'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import { AuthProvider } from './contexts/AuthContext'
@@ -18,6 +20,34 @@ import { DropdownProvider, useDropdown } from './contexts/DropdownContext'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 
+// Component to detect and cleanup any lingering overlay elements
+const OverlayCleanup: React.FC = () => {
+  useEffect(() => {
+    const cleanup = () => {
+      // Find and remove any fixed position elements that might be blocking interactions
+      const fixedElements = document.querySelectorAll('.fixed.inset-0');
+      
+      fixedElements.forEach(el => {
+        // Only remove elements that might be blocking interactions but are not part of active modals
+        const isPartOfActiveModal = el.closest('[role="dialog"]') || 
+                                    el.parentElement?.classList.contains('z-50');
+        
+        if (!isPartOfActiveModal) {
+          el.remove();
+        }
+      });
+    };
+
+    // Run cleanup on mount and set interval to check periodically
+    cleanup();
+    const interval = setInterval(cleanup, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  return null; // This component doesn't render anything
+};
+
 function AppContent() {
   const { isDropdownOpen } = useDropdown();
   
@@ -25,15 +55,14 @@ function AppContent() {
     <Router>
       <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 pt-16 flex flex-col">
         <Navbar />
-        <div 
-          className={`flex-grow ${isDropdownOpen ? 'filter blur-sm transition-all ease-in-out duration-300' : ''}`}
-          onClick={() => isDropdownOpen && document.dispatchEvent(new MouseEvent('mousedown'))}
-        >
+        <OverlayCleanup />
+        <div className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/find-work" element={<FindWork />} />
             <Route path="/find-freelancers" element={<FindFreelancers />} />
-            <Route path="/freelancer/:id" element={<FreelancerProfile />} />
+            <Route path="/freelancer-profile/:id" element={<FreelancerProfile />} />
+            <Route path="/freelancer-reviews/:id" element={<FreelancerReviewsPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route
@@ -57,6 +86,14 @@ function AppContent() {
               element={
                 <ProtectedRoute>
                   <TaskManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-applications"
+              element={
+                <ProtectedRoute>
+                  <FreelancerApplications />
                 </ProtectedRoute>
               }
             />

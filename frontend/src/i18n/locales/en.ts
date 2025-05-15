@@ -61,6 +61,9 @@ export default {
     'cancel': 'Cancel',
     'saveChanges': 'Save Changes',
     'saving': 'Saving...',
+    'profileVisibility': 'Profile Visibility',
+    'makeProfileHidden': 'Make my account hidden',
+    'hiddenProfileInfo': 'Your profile will not appear on the Find Freelancers page',
     
     // Homepage
     'hero': {
@@ -97,6 +100,81 @@ export default {
       'step2Desc': 'Browse through available projects or post your own to find the perfect match.',
       'step3': 'Start Working',
       'step3Desc': 'Collaborate, deliver, and get paid securely through our platform.'
-    }
+    },
+    
+    // Additional Homepage translations for hardcoded text
+    'hireTalent': 'Hire Talent',
+    'hireTalentDesc': 'Post your projects and find skilled professionals to help you achieve your goals.',
+    'workOnYourSchedule': 'Work On Your Schedule',
+    'workOnYourScheduleDesc': 'Choose projects that fit your timeline and work whenever it\'s convenient for you.',
+    'securePayments': 'Secure Payments',
+    'securePaymentsDesc': 'Our platform ensures safe and timely payments for all completed work.',
+    
+    'gettingStarted': 'Getting Started',
+    'howWorkTideWorks': 'How WorkTide Works',
+    'followSimpleSteps': 'Follow these simple steps to get started on your freelancing journey.',
+    
+    'createYourProfile': 'Create Your Profile',
+    'createProfileDesc': 'Sign up and build your professional profile highlighting your skills and experience.',
+    'findOpportunities': 'Find Opportunities',
+    'findOpportunitiesDesc': 'Browse available projects or submit proposals for jobs that match your expertise.',
+    'getPaid': 'Get Paid',
+    'getPaidDesc': 'Complete your work and receive payment directly through our secure platform.',
+    
+    'testimonials': 'Testimonials',
+    'whatUsersSay': 'What Our Users Say',
+    
+    'testimonial1Name': 'Sarah Johnson',
+    'testimonial1Role': 'UX Designer',
+    'testimonial1Text': '"WorkTide has transformed my freelancing career. I\'ve connected with amazing clients and have a steady stream of projects."',
+    
+    'testimonial2Name': 'Michael Chen',
+    'testimonial2Role': 'Web Developer',
+    'testimonial2Text': '"The platform is intuitive and makes it easy to showcase my portfolio. I\'ve increased my client base by 200% since joining."',
+    
+    'testimonial3Name': 'Emily Rodriguez',
+    'testimonial3Role': 'Content Writer',
+    'testimonial3Text': '"As a business owner, WorkTide helps me find qualified freelancers quickly. The quality of work has been exceptional."',
+    
+    'readyToBoost': 'Ready to boost your career?',
+    'startUsingWorkTide': 'Start using WorkTide today.',
+    'joinCommunity': 'Join thousands of freelancers and businesses already using our platform to connect and collaborate.',
+    'getStartedNow': 'Get Started Now',
+    
+    // FindWork page
+    'findYourNextProject': 'Find Your Next Project',
+    'browseAvailableProjects': 'Browse through available projects and find the perfect match for your skills.',
+    'viewMyApplications': 'View My Applications',
+    'searchByTitleOrSkills': 'Search by title or skills...',
+    'filterBySkills': 'Filter by skills:',
+    'budgetRange': 'Budget Range:',
+    'datePosted': 'Date Posted:',
+    'anytime': 'Anytime',
+    'lastDay': 'Last 24 hours',
+    'lastWeek': 'Last 7 days',
+    'lastMonth': 'Last 30 days',
+    'applyNow': 'Apply Now',
+    'applied': 'Applied',
+    'loadingTasks': 'Loading projects...',
+    'noTasksFound': 'No projects found matching your criteria.',
+    'jobPosted': 'Posted',
+    'applyForThisTask': 'Apply for this Project',
+    'coverLetter': 'Cover Letter',
+    'tellClientWhyYoureGoodFit': 'Tell the client why you\'re a good fit for this project...',
+    'submit': 'Submit',
+    'applicationSubmittedSuccess': 'Application submitted successfully!',
+    
+    // FindFreelancers page
+    'findFreelancersTitle': 'Find Freelancers',
+    'connectWithTalentedProfessionals': 'Connect with talented professionals for your projects',
+    'searchByNameOrSkills': 'Search by name or skills...',
+    'filterBySkillsLabel': 'Filter by skills:',
+    'loadingFreelancers': 'Loading freelancers...',
+    'noFreelancersFound': 'No freelancers found matching your criteria.',
+    'freelancer': 'Freelancer',
+    'jobsCompleted': 'jobs completed',
+    'remote': 'Remote',
+    'viewProfile': 'View Profile',
+    'perHour': 'hr'
   }
 }; 

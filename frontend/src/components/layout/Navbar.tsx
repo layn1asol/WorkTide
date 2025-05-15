@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
-import { UserCircleIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useDropdown } from '../../contexts/DropdownContext';
+import Avatar from '../../components/Avatar';
+import { Bars3Icon, SunIcon, MoonIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 
 const Navbar: React.FC = () => {
   const { t } = useTranslation();
@@ -183,6 +184,18 @@ const Navbar: React.FC = () => {
                           Manage Tasks
                         </Link>
                       )}
+                      {user.userType === 'freelancer' && (
+                        <Link
+                          to="/my-applications"
+                          className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-black dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 hover:text-gray-800 dark:hover:text-white"
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            setDropdownOpen(false);
+                          }}
+                        >
+                          My Applications
+                        </Link>
+                      )}
                       <Link
                         to="/settings"
                         className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-black dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 hover:text-gray-800 dark:hover:text-white"
@@ -241,7 +254,11 @@ const Navbar: React.FC = () => {
                   }}
                   className="flex items-center space-x-2 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white focus:outline-none"
                 >
-                  <UserCircleIcon className="h-8 w-8" />
+                  <Avatar 
+                    fullName={user.fullName}
+                    className="h-8 w-8"
+                    textSize="text-xs"
+                  />
                   <span className="text-sm font-medium">{user.fullName}</span>
                 </button>
                 {isDropdownOpen && (
@@ -265,6 +282,17 @@ const Navbar: React.FC = () => {
                       >
                         <div className="flex items-center space-x-2">
                           <span>Manage Tasks</span>
+                        </div>
+                      </Link>
+                    )}
+                    {user.userType === 'freelancer' && (
+                      <Link
+                        to="/my-applications"
+                        className="block px-4 py-2 text-sm text-black dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <span>My Applications</span>
                         </div>
                       </Link>
                     )}

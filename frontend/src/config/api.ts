@@ -26,6 +26,11 @@ export const API_ENDPOINTS = {
       return queryString ? `${url}?${queryString}` : url;
     },
   },
+  ratings: {
+    create: `${API_BASE_URL}/ratings`,
+    getByFreelancer: (freelancerId: string) => `${API_BASE_URL}/ratings/freelancer/${freelancerId}`,
+    checkRating: (freelancerId: string) => `${API_BASE_URL}/ratings/check/${freelancerId}`,
+  },
   tasks: {
     create: `${API_BASE_URL}/tasks`,
     getAll: (search?: string, skills?: string[], status?: string) => {
@@ -51,5 +56,12 @@ export const API_ENDPOINTS = {
     getByClient: (clientId: string) => `${API_BASE_URL}/tasks/client/${clientId}`,
     update: (id: string) => `${API_BASE_URL}/tasks/${id}`,
     delete: (id: string) => `${API_BASE_URL}/tasks/${id}`,
+  },
+  taskApplications: {
+    apply: (taskId: string) => `${API_BASE_URL}/task-applications/${taskId}/apply`,
+    getByTask: (taskId: string) => `${API_BASE_URL}/task-applications/task/${taskId}`,
+    getByFreelancer: `${API_BASE_URL}/task-applications/freelancer`,
+    updateStatus: (applicationId: string) => `${API_BASE_URL}/task-applications/${applicationId}/status`,
+    assignFreelancer: (applicationId: string) => `${API_BASE_URL}/task-applications/${applicationId}/assign`, 
   }
 }; 

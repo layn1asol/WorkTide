@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon, EnvelopeIcon, PhoneIcon, GlobeAltIcon, StarIcon } from '@heroicons/react/24/outline';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { ArrowLeftIcon, EnvelopeIcon, PhoneIcon, GlobeAltIcon, StarIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { API_ENDPOINTS } from '../config/api';
+import RatingComponent from '../components/RatingComponent';
+import Avatar from '../components/Avatar';
 
 interface Freelancer {
   id: string;
@@ -38,32 +40,38 @@ const FreelancerProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchFreelancer = async () => {
-      if (!id) return;
+  const fetchFreelancerData = async () => {
+    if (!id) return;
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await fetch(API_ENDPOINTS.profile.getById(id));
       
-      setLoading(true);
-      setError('');
-      
-      try {
-        const response = await fetch(API_ENDPOINTS.profile.getById(id));
-        
-        if (response.ok) {
-          const data = await response.json();
-          setFreelancer(data);
-        } else {
-          setError('Failed to load freelancer profile');
-        }
-      } catch (err) {
-        setError('An error occurred while loading the profile');
-        console.error(err);
-      } finally {
-        setLoading(false);
+      if (response.ok) {
+        const data = await response.json();
+        setFreelancer(data);
+      } else {
+        setError('Failed to load freelancer profile');
       }
-    };
+    } catch (err) {
+      setError('An error occurred while loading the profile');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchFreelancer();
+  useEffect(() => {
+    fetchFreelancerData();
   }, [id]);
+
+  // Handle successful rating update
+  const handleRatingSuccess = () => {
+    // Refresh freelancer data to update the displayed rating
+    fetchFreelancerData();
+  };
 
   if (loading) {
     return (
@@ -117,10 +125,9 @@ const FreelancerProfile: React.FC = () => {
         <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
           <div className="p-6 sm:p-8">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-              <img
-                src={freelancer.imageUrl || "https://randomuser.me/api/portraits/lego/1.jpg"}
-                alt={displayName}
-                className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-white shadow"
+              <Avatar
+                fullName={displayName}
+                className="w-24 h-24 sm:w-32 sm:h-32 text-xl"
               />
               <div className="flex-1 text-center sm:text-left">
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{displayName}</h1>
@@ -130,7 +137,13 @@ const FreelancerProfile: React.FC = () => {
                   {freelancer.rating && (
                     <div className="flex items-center">
                       <StarIcon className="h-5 w-5 text-yellow-400" />
-                      <span className="ml-1 text-gray-700">{freelancer.rating} ({freelancer.completedJobs || 0} jobs)</span>
+                      <span className="ml-1 text-gray-700">{freelancer.rating.toFixed(1)}</span>
+                      <Link 
+                        to={`/freelancer-reviews/${freelancer.id}`}
+                        className="ml-1 text-blue-600 hover:text-blue-800 hover:underline"
+                      >
+                        ({freelancer.completedJobs || 0} reviews)
+                      </Link>
                     </div>
                   )}
                   {freelancer.location && (
@@ -207,6 +220,32 @@ const FreelancerProfile: React.FC = () => {
                   </div>
                 ) : (
                   <p className="text-gray-500 italic">No education information provided</p>
+                )}
+              </div>
+            </div>
+
+            {/* Ratings & Reviews Section with View All link */}
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-gray-900">Ratings & Reviews</h2>
+                  <Link 
+                    to={`/freelancer-reviews/${freelancer.id}`}
+                    className="flex items-center text-blue-600 hover:text-blue-700"
+                  >
+                    View all reviews
+                    <ArrowRightIcon className="h-4 w-4 ml-1" />
+                  </Link>
+                </div>
+                
+                {/* RatingComponent will display a preview of reviews */}
+                {freelancer.id && (
+                  <RatingComponent 
+                    freelancerId={freelancer.id} 
+                    onRatingSuccess={handleRatingSuccess}
+                    previewMode={true}
+                    maxReviews={3}
+                  />
                 )}
               </div>
             </div>

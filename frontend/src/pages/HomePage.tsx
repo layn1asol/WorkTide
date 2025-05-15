@@ -78,9 +78,9 @@ const HomePage: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-16">
-                  <h3 className={`text-lg leading-6 font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Hire Talent</h3>
+                  <h3 className={`text-lg leading-6 font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{t('hireTalent')}</h3>
                   <p className={`mt-2 text-base ${theme === 'dark' ? 'text-indigo-100' : 'text-gray-500'}`}>
-                    Post your projects and find skilled professionals to help you achieve your goals.
+                    {t('hireTalentDesc')}
                   </p>
                 </div>
               </div>
@@ -93,9 +93,9 @@ const HomePage: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-16">
-                  <h3 className={`text-lg leading-6 font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Work On Your Schedule</h3>
+                  <h3 className={`text-lg leading-6 font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{t('workOnYourSchedule')}</h3>
                   <p className={`mt-2 text-base ${theme === 'dark' ? 'text-indigo-100' : 'text-gray-500'}`}>
-                    Choose projects that fit your timeline and work whenever it's convenient for you.
+                    {t('workOnYourScheduleDesc')}
                   </p>
                 </div>
               </div>
@@ -108,9 +108,9 @@ const HomePage: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-16">
-                  <h3 className={`text-lg leading-6 font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Secure Payments</h3>
+                  <h3 className={`text-lg leading-6 font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{t('securePayments')}</h3>
                   <p className={`mt-2 text-base ${theme === 'dark' ? 'text-indigo-100' : 'text-gray-500'}`}>
-                    Our platform ensures safe and timely payments for all completed work.
+                    {t('securePaymentsDesc')}
                   </p>
                 </div>
               </div>
@@ -123,12 +123,12 @@ const HomePage: React.FC = () => {
       <div className={`py-16 w-full bg-indigo-700`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
-            <h2 className="text-base font-semibold tracking-wide uppercase text-indigo-200">Getting Started</h2>
+            <h2 className="text-base font-semibold tracking-wide uppercase text-indigo-200">{t('gettingStarted')}</h2>
             <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight sm:text-4xl text-white">
-              How WorkTide Works
+              {t('howWorkTideWorks')}
             </p>
             <p className="mt-4 max-w-2xl text-xl lg:mx-auto text-indigo-100">
-              Follow these simple steps to get started on your freelancing journey.
+              {t('followSimpleSteps')}
             </p>
           </div>
           
@@ -139,9 +139,9 @@ const HomePage: React.FC = () => {
                 <div className="flex items-center justify-center h-16 w-16 rounded-full mx-auto bg-indigo-200 text-indigo-800">
                   <span className="text-xl font-bold">1</span>
                 </div>
-                <h3 className="mt-4 text-lg font-medium text-white">Create Your Profile</h3>
+                <h3 className="mt-4 text-lg font-medium text-white">{t('createYourProfile')}</h3>
                 <p className="mt-2 text-base text-indigo-100">
-                  Sign up and build your professional profile highlighting your skills and experience.
+                  {t('createProfileDesc')}
                 </p>
               </div>
               
@@ -150,9 +150,9 @@ const HomePage: React.FC = () => {
                 <div className="flex items-center justify-center h-16 w-16 rounded-full mx-auto bg-indigo-200 text-indigo-800">
                   <span className="text-xl font-bold">2</span>
                 </div>
-                <h3 className="mt-4 text-lg font-medium text-white">Find Opportunities</h3>
+                <h3 className="mt-4 text-lg font-medium text-white">{t('findOpportunities')}</h3>
                 <p className="mt-2 text-base text-indigo-100">
-                  Browse available projects or submit proposals for jobs that match your expertise.
+                  {t('findOpportunitiesDesc')}
                 </p>
               </div>
               
@@ -161,9 +161,9 @@ const HomePage: React.FC = () => {
                 <div className="flex items-center justify-center h-16 w-16 rounded-full mx-auto bg-indigo-200 text-indigo-800">
                   <span className="text-xl font-bold">3</span>
                 </div>
-                <h3 className="mt-4 text-lg font-medium text-white">Get Paid</h3>
+                <h3 className="mt-4 text-lg font-medium text-white">{t('getPaid')}</h3>
                 <p className="mt-2 text-base text-indigo-100">
-                  Complete your work and receive payment directly through our secure platform.
+                  {t('getPaidDesc')}
                 </p>
               </div>
             </div>
@@ -175,9 +175,9 @@ const HomePage: React.FC = () => {
       <div className={`py-16 w-full ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center mb-12">
-            <h2 className={`text-base font-semibold tracking-wide uppercase ${theme === 'dark' ? 'text-indigo-200' : 'text-indigo-600'}`}>Testimonials</h2>
+            <h2 className={`text-base font-semibold tracking-wide uppercase ${theme === 'dark' ? 'text-indigo-200' : 'text-indigo-600'}`}>{t('testimonials')}</h2>
             <p className={`mt-2 text-3xl leading-8 font-extrabold tracking-tight sm:text-4xl ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              What Our Users Say
+              {t('whatUsersSay')}
             </p>
           </div>
           
@@ -191,12 +191,12 @@ const HomePage: React.FC = () => {
                   alt="User profile"
                 />
                 <div>
-                  <h4 className={`text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sarah Johnson</h4>
-                  <p className={theme === 'dark' ? 'text-indigo-200' : 'text-indigo-600'}>UX Designer</p>
+                  <h4 className={`text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{t('testimonial1Name')}</h4>
+                  <p className={theme === 'dark' ? 'text-indigo-200' : 'text-indigo-600'}>{t('testimonial1Role')}</p>
                 </div>
               </div>
               <p className={theme === 'dark' ? 'text-indigo-100' : 'text-gray-600'}>
-                "WorkTide has transformed my freelancing career. I've connected with amazing clients and have a steady stream of projects."
+                {t('testimonial1Text')}
               </p>
             </div>
             
@@ -209,12 +209,12 @@ const HomePage: React.FC = () => {
                   alt="User profile"
                 />
                 <div>
-                  <h4 className={`text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Michael Chen</h4>
-                  <p className={theme === 'dark' ? 'text-indigo-200' : 'text-indigo-600'}>Web Developer</p>
+                  <h4 className={`text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{t('testimonial2Name')}</h4>
+                  <p className={theme === 'dark' ? 'text-indigo-200' : 'text-indigo-600'}>{t('testimonial2Role')}</p>
                 </div>
               </div>
               <p className={theme === 'dark' ? 'text-indigo-100' : 'text-gray-600'}>
-                "The platform is intuitive and makes it easy to showcase my portfolio. I've increased my client base by 200% since joining."
+                {t('testimonial2Text')}
               </p>
             </div>
             
@@ -227,12 +227,12 @@ const HomePage: React.FC = () => {
                   alt="User profile"
                 />
                 <div>
-                  <h4 className={`text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Emily Rodriguez</h4>
-                  <p className={theme === 'dark' ? 'text-indigo-200' : 'text-indigo-600'}>Content Writer</p>
+                  <h4 className={`text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{t('testimonial3Name')}</h4>
+                  <p className={theme === 'dark' ? 'text-indigo-200' : 'text-indigo-600'}>{t('testimonial3Role')}</p>
                 </div>
               </div>
               <p className={theme === 'dark' ? 'text-indigo-100' : 'text-gray-600'}>
-                "As a business owner, WorkTide helps me find qualified freelancers quickly. The quality of work has been exceptional."
+                {t('testimonial3Text')}
               </p>
             </div>
           </div>
@@ -244,18 +244,19 @@ const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-              <span className="block">Ready to boost your career?</span>
-              <span className="block">Start using WorkTide today.</span>
+              <span className="block">{t('readyToBoost')}</span>
+              <span className="block">{t('startUsingWorkTide')}</span>
             </h2>
             <p className="mt-4 text-lg leading-6 text-indigo-100">
-              Join thousands of freelancers and businesses already using our platform to connect and collaborate.
+              {t('joinCommunity')}
             </p>
-            <Link
-              to="/signup"
-              className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 sm:w-auto"
-            >
-              Sign up for free
-            </Link>
+            <div className="mt-8 flex justify-center">
+              <div className="inline-flex rounded-md shadow">
+                <Link to="/signup" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-white hover:bg-indigo-50">
+                  {t('getStartedNow')}
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

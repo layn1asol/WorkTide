@@ -38,10 +38,10 @@ export class TasksService {
     skills?: string[];
     status?: string;
   }) {
-    const where: Prisma.TaskWhereInput = {
-      // Default to open tasks
-      status: filters?.status || 'open',
-    };
+    const where: Prisma.TaskWhereInput = {};
+
+    // Add status filter if provided, default to 'open' if not provided
+    where.status = filters?.status || 'open';
 
     // Add search filter if provided
     if (filters?.search) {

@@ -21,100 +21,51 @@ let AuthService = class AuthService {
         this.prisma = prisma;
         this.jwtService = jwtService;
     }
-    async signup(data) {
-        const existingUser = await this.prisma.user.findUnique({
-            where: { email: data.email },
-        });
-        if (existingUser) {
-            throw new common_1.ConflictException('Email already registered');
-        }
-        const hashedPassword = await bcrypt.hash(data.password, 10);
-        const user = await this.prisma.user.create({
-            data: {
-                email: data.email,
-                password: hashedPassword,
-                fullName: data.fullName,
-                userType: data.userType,
-            },
-        });
-        const token = this.jwtService.sign({
-            sub: user.id,
-            email: user.email,
-            userType: user.userType,
-        });
-        return {
-            token,
-            user: {
-                id: user.id,
-                email: user.email,
-                fullName: user.fullName,
-                userType: user.userType,
-                createdAt: user.createdAt,
-            },
-        };
-    }
-    async login(email, password) {
+    async validateUser(email, password) {
         const user = await this.prisma.user.findUnique({
             where: { email },
         });
         if (!user) {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
-        const token = this.jwtService.sign({
-            sub: user.id,
-            email: user.email,
-            userType: user.userType,
-        });
-        return {
-            token,
-            user: {
-                id: user.id,
-                email: user.email,
-                fullName: user.fullName,
-                userType: user.userType,
-                createdAt: user.createdAt,
-                title: user.title,
-                bio: user.bio,
-                skills: user.skills,
-                hourlyRate: user.hourlyRate,
-                rating: user.rating,
-                completedJobs: user.completedJobs,
-                location: user.location,
-                imageUrl: user.imageUrl,
-                languages: user.languages,
-                education: user.education,
-                experience: user.experience,
-            },
-        };
+        const { password: _, ...result } = user;
+        return result;
     }
-    async validateUser(id) {
-        const user = await this.prisma.user.findUnique({
-            where: { id },
+    async register(userData) {
+        const { email, password, fullName, userType } = userData;
+        const existingUser = await this.prisma.user.findUnique({
+            where: { email },
         });
-        if (!user) {
-            throw new common_1.UnauthorizedException('User not found');
+        if (existingUser) {
+            throw new common_1.BadRequestException('User already exists');
         }
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(password, salt);
+        const newUser = await this.prisma.user.create({
+            data: {
+                email,
+                password: hashedPassword,
+                fullName,
+                userType,
+            },
+        });
+        const token = this.jwtService.sign({
+            sub: newUser.id,
+            email: newUser.email,
+            userType: newUser.userType
+        });
+        const { password: _, ...user } = newUser;
+        return { user, token };
+    }
+    async login(user) {
+        const payload = { sub: user.id, email: user.email, userType: user.userType };
         return {
-            id: user.id,
-            email: user.email,
-            fullName: user.fullName,
-            userType: user.userType,
-            createdAt: user.createdAt,
-            title: user.title,
-            bio: user.bio,
-            skills: user.skills,
-            hourlyRate: user.hourlyRate,
-            rating: user.rating,
-            completedJobs: user.completedJobs,
-            location: user.location,
-            imageUrl: user.imageUrl,
-            languages: user.languages,
-            education: user.education,
-            experience: user.experience,
+            token: this.jwtService.sign(payload),
+            user
         };
     }
 };

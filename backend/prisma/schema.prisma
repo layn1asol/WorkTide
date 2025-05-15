@@ -34,9 +34,13 @@ model User {
   languages    String[] @default([])
   education    Json[]   @default([])  // Array of education objects
   experience   Json[]   @default([])  // Array of experience objects
+  isHidden     Boolean  @default(false) // Whether the freelancer profile is hidden from search
   
   // Relations
   tasks        Task[]   // Tasks created by clients
+  ratingsReceived Rating[] @relation("FreelancerRatings") // Ratings received by freelancers
+  ratingsGiven  Rating[] @relation("ClientRatings") // Ratings given by clients
+  applications TaskApplication[] // Applications submitted by freelancers
 }
 
 model Project {
@@ -62,4 +66,38 @@ model Task {
   // Relations
   clientId    String
   client      User     @relation(fields: [clientId], references: [id])
+  applications TaskApplication[] // Applications received for this task
+}
+
+model Rating {
+  id            String   @id @default(uuid())
+  score         Float    // Rating score (1-5)
+  comment       String?  // Optional comment with the rating
+  createdAt     DateTime @default(now())
+  
+  // Relations
+  freelancerId  String
+  clientId      String
+  freelancer    User     @relation("FreelancerRatings", fields: [freelancerId], references: [id])
+  client        User     @relation("ClientRatings", fields: [clientId], references: [id])
+  
+  // Ensure a client can only rate a freelancer once
+  @@unique([clientId, freelancerId])
+}
+
+model TaskApplication {
+  id          String   @id @default(uuid())
+  coverLetter String?  // Optional message from the freelancer
+  status      String   @default("pending") // 'pending', 'accepted', 'rejected'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id])
+  freelancerId String
+  freelancer  User     @relation(fields: [freelancerId], references: [id])
+  
+  // Ensure a freelancer can only apply once to a task
+  @@unique([taskId, freelancerId])
 }

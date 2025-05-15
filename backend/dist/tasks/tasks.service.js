@@ -32,9 +32,8 @@ let TasksService = class TasksService {
         });
     }
     async getAllTasks(filters) {
-        const where = {
-            status: filters?.status || 'open',
-        };
+        const where = {};
+        where.status = filters?.status || 'open';
         if (filters?.search) {
             where.OR = [
                 { title: { contains: filters.search, mode: 'insensitive' } },
